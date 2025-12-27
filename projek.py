@@ -54,108 +54,9 @@ with open("id-ji.geojson", "r", encoding="utf-8") as f:
 latest = df_kemiskinan.sort_values("Tahun").iloc[-1]
 jumlah_miskin = latest.get("Penduduk Miskin", 0)
 
-tab1, tab2 , tab3= st.tabs(["Input Data","Penduduk","Sosial-Ekonomi"])
+tab1, tab2 , tab3= st.tabs(["Penduduk","Sosial-Ekonomi"])
 
 with tab1:
-    tahun = st.number_input("Tahun", min_value=2000, max_value=2100, step=1)
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        jumlah_penduduk = st.number_input("Jumlah Penduduk", min_value=0.0)
-        penduduk_miskin = st.number_input("Penduduk Miskin", min_value=0.0)
-        persentase_miskin = st.number_input("Persentase Penduduk Miskin (%)", min_value=0.0, max_value=100.0)
-        garis_kemiskinan = st.number_input("Garis Kemiskinan", min_value=0.0)
-        kedalaman = st.number_input("Indeks Kedalaman Kemiskinan", min_value=0.0)
-        keparahan = st.number_input("Indeks Keparahan Kemiskinan", min_value=0.0)
-        gini = st.number_input("Gini Ratio", min_value=0.0, max_value=1.0)
-        t_smp = st.number_input("Pendidikan Tamat <SD", min_value=0.0)
-
-    with col2:
-        sd_smp = st.number_input("Pendidikan Tamat SD/SMP", min_value=0.0)
-        sma = st.number_input("Pendidikan Tamat SMA", min_value=0.0)
-        tidak_bekerja = st.number_input("Tidak Bekerja", min_value=0.0)
-        bekerja_informal = st.number_input("Bekerja Informal", min_value=0.0)
-        bekerja_formal = st.number_input("Bekerja Formal", min_value=0.0)
-        bekerja_pertanian = st.number_input("Bekerja Pertanian", min_value=0.0)
-        bekerja_nonpertanian = st.number_input("Bekerja Bukan Pertanian", min_value=0.0)
-        melek_huruf = st.number_input("Angka Melek Huruf", min_value=0.0, max_value=100.0)
-
-    with col3:
-        aps_7_12 = st.number_input("APS 7–12 Tahun", min_value=0.0, max_value=100.0)
-        aps_13_15 = st.number_input("APS 13–15 Tahun", min_value=0.0, max_value=100.0)
-        air_layak = st.number_input("Air Layak (%)", min_value=0.0, max_value=100.0)
-        jamban = st.number_input("Jamban Sendiri/Bersama (%)", min_value=0.0, max_value=100.0)
-        keluhan_ya = st.number_input("Keluhan Kesehatan (Ya)", min_value=0.0)
-        keluhan_tidak = st.number_input("Keluhan Kesehatan (Tidak)", min_value=0.0)
-        jamkes_punya = st.number_input("Jamkes (Punya)", min_value=0.0)
-        jamkes_tidak = st.number_input("Jamkes (Tidak Punya)", min_value=0.0)
-
-        st.markdown('<div class:"simpan">', unsafe_allow_html=True)
-        simpan = st.button("Simpan")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        if simpan:
-            file_path = "Kemiskinan.xlsx"
-
-            if os.path.exists(file_path):
-                df = pd.read_excel(file_path)
-                df.columns = df.columns.str.strip()
-            else:
-                df = pd.DataFrame(columns=[
-                    "Tahun", "Jumlah Penduduk", "Penduduk Miskin", "Persentase Penduduk Miskin",
-                    "Garis Kemiskinan", "Indeks Kedalaman Kemiskinan", "Indeks Keparahan Kemiskinan",
-                    "Gini Ratio", "Pendidikan Tamat <SD", "Pendidikan Tamat SD/SMP", "Pendidikan Tamat SMA",
-                    "Tidak Bekerja", "Bekerja Informal", "Bekerja Formal", "Bekerja Pertanian",
-                    "Bekerja Bukan Pertanian", "Angka Melek Huruf",
-                    "Angka Partsipasi Sekolah 7 - 12 tahun", "Angka Partsipasi Sekolah 13 - 15 tahun",
-                    "Air Layak", "Jamban Sendiri/Bersama",
-                    "Keluhan Kesehatan (Ya)", "Keluhan Kesehatan (Tidak)",
-                    "Jamkes (Punya)", "Jamkes (Tidak Punya)"
-                ])
-
-            input_values = {
-                "Jumlah Penduduk": jumlah_penduduk,
-                "Penduduk Miskin": penduduk_miskin,
-                "Persentase Penduduk Miskin": persentase_miskin,
-                "Garis Kemiskinan": garis_kemiskinan,
-                "Indeks Kedalaman Kemiskinan": kedalaman,
-                "Indeks Keparahan Kemiskinan": keparahan,
-                "Gini Ratio": gini,
-                "Pendidikan Tamat <SD": t_smp,
-                "Pendidikan Tamat SD/SMP": sd_smp,
-                "Pendidikan Tamat SMA": sma,
-                "Tidak Bekerja": tidak_bekerja,
-                "Bekerja Informal": bekerja_informal,
-                "Bekerja Formal": bekerja_formal,
-                "Bekerja Pertanian": bekerja_pertanian,
-                "Bekerja Bukan Pertanian": bekerja_nonpertanian,
-                "Angka Melek Huruf": melek_huruf,
-                "Angka Partsipasi Sekolah 7 - 12 tahun": aps_7_12,
-                "Angka Partsipasi Sekolah 13 - 15 tahun": aps_13_15,
-                "Air Layak": air_layak,
-                "Jamban Sendiri/Bersama": jamban,
-                "Keluhan Kesehatan (Ya)": keluhan_ya,
-                "Keluhan Kesehatan (Tidak)": keluhan_tidak,
-                "Jamkes (Punya)": jamkes_punya,
-                "Jamkes (Tidak Punya)": jamkes_tidak
-            }
-
-            if tahun in df["Tahun"].values:
-                st.warning(f"Data untuk tahun {tahun} sudah ada!")
-            else:
-                new_row = {col: 0 for col in df.columns}
-                new_row["Tahun"] = tahun
-                for col, val in input_values.items():
-                    if val != 0:
-                        new_row[col] = val
-                df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
-                df.sort_values("Tahun", inplace=True)
-                df.to_excel(file_path, index=False)
-                st.success(f"Data untuk tahun {tahun} berhasil disimpan!")
-
-with tab2:
-
     c1, c2, c3, c4, c5 = st.columns(5)
 
     with c1:
@@ -244,7 +145,7 @@ with tab2:
     st.plotly_chart(fig_map, use_container_width=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-with tab3:
+with tab2:
     # KORELASI
     df_subset = df.iloc[7:, 3:].drop(columns=[
         "Garis Kemiskinan", "Indeks Kedalaman Kemiskinan", "Indeks Keparahan Kemiskinan",
@@ -339,3 +240,4 @@ with tab3:
             st.markdown('<div class="chart-card"><h3>Kepemilikan Jamkes</h3>', unsafe_allow_html=True)
             st.plotly_chart(fig_jamkes, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
+

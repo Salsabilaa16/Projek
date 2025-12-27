@@ -54,7 +54,7 @@ with open("id-ji.geojson", "r", encoding="utf-8") as f:
 latest = df_kemiskinan.sort_values("Tahun").iloc[-1]
 jumlah_miskin = latest.get("Penduduk Miskin", 0)
 
-tab1, tab2 , tab3= st.tabs(["Penduduk","Sosial-Ekonomi"])
+tab1, tab2 = st.tabs(["Penduduk","Sosial-Ekonomi"])
 
 with tab1:
     c1, c2, c3, c4, c5 = st.columns(5)
@@ -240,4 +240,5 @@ with tab2:
             st.markdown('<div class="chart-card"><h3>Kepemilikan Jamkes</h3>', unsafe_allow_html=True)
             st.plotly_chart(fig_jamkes, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
+
 

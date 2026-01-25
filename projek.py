@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import plotly.express as px
 from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.holtwinters import ExponentialSmoothing
 import json
 
 st.set_page_config(layout="wide", page_title="Dashboard Kemiskinan")
@@ -103,15 +104,47 @@ with tab1:
     fig_combo.add_scatter(x=df_kemiskinan["Tahun"], y=df_kemiskinan["Penduduk Miskin"],
                           mode="lines+markers", line=dict(color="red"))
 
-    # FORECASTING
+# FORECASTING
     ts = df_kemiskinan.set_index("Tahun")["Penduduk Miskin"]
-    model = ARIMA(ts, order=(1,1,0)).fit()
-    forecast = model.forecast(steps=5)
+
+    model_arima = ARIMA(ts, order=(1,1,0)).fit()
+    forecast_arima = model_arima.forecast(steps=5)
+
+    model_holt = ExponentialSmoothing(
+        ts,
+        trend="add",
+        seasonal=None
+    ).fit()
+
+    forecast_holt = model_holt.forecast(steps=5)
     future_years = [ts.index[-1] + i for i in range(1, 6)]
 
-    fig_forecast = px.line(x=ts.index, y=ts.values, title="")
-    fig_forecast.add_scatter(x=future_years, y=forecast.values,
-                             mode="lines+markers", line=dict(dash="dash", color="red"))
+    fig_forecast = px.line(
+        x=ts.index,
+        y=ts.values,
+        title="Peramalan Penduduk Miskin: ARIMA vs Holt Linear Trend"
+    )
+
+    fig_forecast.add_scatter(
+        x=future_years,
+        y=forecast_arima.values,
+        mode="lines+markers",
+        name="ARIMA",
+        line=dict(dash="dash", color="red")
+    )
+
+    fig_forecast.add_scatter(
+        x=future_years,
+        y=forecast_holt.values,
+        mode="lines+markers",
+        name="Holt Linear Trend",
+        line=dict(dash="dot", color="blue")
+    )
+
+    fig_forecast.update_layout(
+        xaxis_title="Tahun",
+        yaxis_title="Jumlah Penduduk Miskin"
+    )
 
     row2_col1, row2_col2 = st.columns([2, 1.2])
 
@@ -240,5 +273,6 @@ with tab2:
             st.markdown('<div class="chart-card"><h3>Kepemilikan Jamkes</h3>', unsafe_allow_html=True)
             st.plotly_chart(fig_jamkes, use_container_width=True)
             st.markdown('</div>', unsafe_allow_html=True)
+
 
 
